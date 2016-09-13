@@ -1,0 +1,26 @@
+<ldap-server-configuration>
+    <properties>
+	 <property id = "url">
+		<value>ldap://10.100.7.99:389/dc=ldap,dc=com</value>
+	</property>
+	<property id = "userSearchFilter">
+		<value>uid={0}</value>
+	</property>
+	<property id = "userSearchBase">
+		<value>ou=support</value>
+	</property>
+	<property id = "groupSearchBase">
+		<value>ou=support</value>
+	</property>
+	<property id = "groupSearchFilter">
+		<value>uniqueMember={1}</value>
+	</property>
+	<property id = "managerDn">
+		<value>cn=admin,dc=ldap,dc=com</value>
+	</property>
+	<property id = "managerPassword">
+		<value>thresh143</value>
+	</property>
+    </properties>
+</ldap-server-configuration>
+

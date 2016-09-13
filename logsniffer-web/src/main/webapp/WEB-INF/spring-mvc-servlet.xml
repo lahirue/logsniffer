@@ -20,8 +20,68 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:context="http://www.springframework.org/schema/context"
+xmlns:sec="http://www.springframework.org/schema/security"
 	xsi:schemaLocation="
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
+
+
+
+	<sec:http pattern="/images/**" security="none"/> 
+	<sec:http>
+	    <!-- configure the roles allowed to access the app -->
+	    <sec:intercept-url pattern="/**" access="hasAnyRole('MANAGER', 'USER')"/>
+	    <!-- add more urls/patters/roles to refine security -->
+	    
+	    <sec:form-login/>
+	    <sec:logout/>
+	    <!-- if you are adding to an exiting app, 
+				you may need to disable CSRF protection until you can make application changes. -->
+	    <!-- sec:csrf disabled="true"/ -->
+	</sec:http>
+ 
+	<!-- add the properties below to your app's properties file 
+			or replace with hardcoded values to get working -->
+	<sec:ldap-server 
+		id="contextSource" 
+		url="ldap://test:10/"
+		manager-dn="test"
+		manager-password="test"/>
+		 
+	<sec:authentication-manager erase-credentials="true">
+		<sec:authentication-provider ref='ldapAuthProvider' />
+	</sec:authentication-manager>
+	 
+	 
+	<!-- using bean-based configuration here to set the DefaultLdapAuthoritiesPopulater with 
+		ignorePartialResultsException=true.  This is a known Spring/AD issue and a workaround for it -->
+	<bean id="ldapAuthProvider" class="org.springframework.security.ldap.authentication.LdapAuthenticationProvider">
+		<constructor-arg>
+			<!-- the bind authenticator will first lookup the user using the service account credentials, then 
+				 attempt to bind the user with their password once found -->
+			<bean id="bindAuthenticator" class="org.springframework.security.ldap.authentication.BindAuthenticator">
+				<constructor-arg ref="contextSource" />
+				<property name="userSearch" ref="userSearch" />
+			</bean>
+		</constructor-arg>
+		<constructor-arg>
+			<bean class="org.springframework.security.ldap.userdetails.DefaultLdapAuthoritiesPopulator">
+				<constructor-arg ref="contextSource" />
+				<constructor-arg value="DC=company,DC=com" /> <!-- group search base -->
+				<!-- <property name="defaultRole" value="ROLE_USER" /> 
+					You can add a default role to everyone if needed -->
+				<property name="searchSubtree" value="true" />
+				<property name="ignorePartialResultException" value="true" />
+				<property name="groupSearchFilter" value="(member={0})" />
+			</bean>
+		</constructor-arg>
+	</bean>
+	<bean id="userSearch" class="org.springframework.security.ldap.search.FilterBasedLdapUserSearch">
+		<constructor-arg index="0" value="DC=company,DC=com" />
+		<constructor-arg index="1" value="(sAMAccountName={0})" />
+		<constructor-arg index="2" ref="contextSource" />
+		<property name="searchSubtree" value="true" />
+	</bean>
 
 </beans>

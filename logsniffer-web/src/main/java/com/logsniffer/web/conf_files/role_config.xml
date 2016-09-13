@@ -1,0 +1,14 @@
+<user-role-configuration>
+    <groups>
+	 <group>
+		<groupname>admin</groupname>
+                <groupid>500</groupid>
+		<role>admin</role>
+	</group>
+         <group>
+		<groupname>regular</groupname>
+                <groupid>501</groupid>
+		<role>regular</role>
+	</group>
+    </groups>
+</user-role-configuration>

@@ -96,6 +96,8 @@ public class Starter {
 		ClassLoader urlClassLoader = new URLClassLoader(execLibs.toArray(new URL[execLibs.size()]));
 		Thread.currentThread().setContextClassLoader(urlClassLoader);
 
+
+
 		System.out.println("Launching Jetty...");
 		Class jettyLauncher = urlClassLoader.loadClass(JETTY_LAUNCHER_CLASS);
 		Method mainMethod = jettyLauncher.getMethod("start", new Class[] { String[].class, URL.class });
