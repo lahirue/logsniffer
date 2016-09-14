@@ -10,9 +10,7 @@ import org.springframework.security.ldap.authentication.ad.ActiveDirectoryLdapAu
 import org.springframework.context.annotation.Bean;
 import org.apache.log4j.Logger;
 import org.springframework.security.core.Authentication;
-import org.springframework.core.env.Environment;
 import org.springframework.security.ldap.DefaultSpringSecurityContextSource;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.logsniffer.config.LDAPServerPropertiesProvider;
 
@@ -48,8 +46,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/c/Reports").access("hasAuthority('APP_ADMIN')")
+                .antMatchers("/c/sources/{\\\\d+}").access("hasAuthority('APP_ADMIN')")
+                .antMatchers("/c/sources/**").permitAll()
                 .antMatchers("/c/System/**").access("hasAuthority('APP_ADMIN')")
-                .antMatchers("/c/sources/**").access("hasAuthority('APP_ADMIN')")
                 .anyRequest()
                 .authenticated()
                 .and()

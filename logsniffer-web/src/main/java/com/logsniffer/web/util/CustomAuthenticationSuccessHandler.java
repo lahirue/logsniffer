@@ -75,13 +75,8 @@ public class CustomAuthenticationSuccessHandler implements
                         }
                     });
 
-            System.out.println(groupIDList);
-
             RoleContextProvider.initialize();
-
             HashMap<String,String> roleMap = RoleContextProvider.getRoleMap();
-
-
             LDAPAuthorityMapper ldapAuthorityMapper =  new LDAPAuthorityMapper();
 
 
